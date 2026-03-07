@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Europa 2026 — Maca</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --bg: #f5f0e8;
+  --surface: #ffffff;
+  --surface2: #f7f7f7;
+  --border: #eeeeee;
+  --gold: #c49a2e;
+  --gold-dim: #a07820;
+  --text: #1a1a1a;
+  --text-dim: #444;
+  --text-muted: #888;
+  --green-light: #3a8a52;
+}
+html { background:#f5f0e8 !important; color-scheme: light !important; overflow-x:hidden; }
+body { background:#f5f0e8 !important; color:var(--text); font-family:'DM Sans',sans-serif; font-weight:300; line-height:1.6; overflow-x:hidden; max-width:100vw; }
+
+/* NAV */
+nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(255,255,255,0.97); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:0;
+}
+.nav-top { display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:52px; }
+.nav-title { font-family:'Playfair Display',serif; font-size:15px; color:var(--gold); }
+.nav-tabs { display:flex; overflow-x:auto; padding:0 20px; gap:0; border-top:1px solid var(--border); scrollbar-width:none; }
+.nav-tabs::-webkit-scrollbar { display:none; }
+.nav-tab { color:var(--text-muted); text-decoration:none; font-size:12px; padding:10px 14px; white-space:nowrap; border-bottom:2px solid transparent; transition:all .2s; font-weight:400; letter-spacing:0.2px; }
+.nav-tab:hover { color:var(--text); border-bottom-color:var(--gold); }
+.btn-nav { background:var(--gold)!important; color:#fff!important; font-weight:500!important; border-radius:20px!important; font-size:12px; padding:7px 16px; text-decoration:none; }
+
+/* HERO */
+.hero { padding:0; text-align:center; margin:0; position:relative; overflow:hidden; }
+.hero-bg { 
+  width:100%; height:420px; display:block;
+  background-image: url('https://images.unsplash.com/photo-1571068996010-4d58abf6bdf2?w=1400&q=80');
+  background-size: cover;
+  background-position: center;
+  position:relative;
+}
+.hero-bg::after {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 100%);
+}
+.hero-content { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; z-index:1; }
+.hero-flag { font-size:32px; margin-bottom:12px; }
+.eyebrow { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
+.hero h1 { font-family:'Playfair Display',serif; font-size:clamp(38px,8vw,72px); font-weight:700; line-height:1.05; margin-bottom:12px; color:#fff; }
+.hero h1 em { font-style:italic; color:var(--gold); }
+.hero-sub { font-size:14px; color:rgba(255,255,255,0.75); margin-bottom:8px; }
+.hero-who { font-size:13px; color:rgba(255,255,255,0.6); margin-bottom:28px; }
+.hero-who strong { color:rgba(255,255,255,0.85); font-weight:400; }
+.btn-gold { display:inline-block; background:var(--gold); color:#000; font-size:13px; font-weight:500; padding:12px 28px; border-radius:24px; text-decoration:none; transition:opacity .2s; }
+.btn-gold:hover { opacity:.85; }
+
+/* STATS */
+.stats { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--border); border-bottom:1px solid var(--border); max-width:100%; margin:0 0 72px; background:#1a1a1a; }
+
+/* ROUTE VISUAL */
+.route-visual { background:#fff; border-radius:16px; padding:28px 24px; margin:0 0 32px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.route-stop-row { display:flex; align-items:flex-start; gap:16px; position:relative; }
+.route-stop-row:not(:last-child)::after { content:''; position:absolute; left:8px; top:20px; width:2px; height:calc(100% + 8px); background:var(--border); z-index:0; }
+.route-dot { width:18px; height:18px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:3px; z-index:1; border:3px solid #fff; box-shadow:0 0 0 2px var(--gold); }
+.route-dot.blue { background:#4a6fa5; box-shadow:0 0 0 2px #4a6fa5; }
+.route-dot.empty { background:#fff; box-shadow:0 0 0 2px #ccc; }
+.route-stop-info { flex:1; padding-bottom:20px; }
+.route-stop-name { font-size:15px; font-weight:600; color:var(--text); }
+.route-stop-desc { font-size:12px; color:var(--text-muted); margin-top:2px; }
+.route-connector { font-size:11px; color:var(--text-muted); padding:4px 0 4px 34px; font-style:italic; }
+.nights-badge { display:inline-block; background:var(--gold); color:#fff; font-size:11px; font-weight:600; padding:4px 12px; border-radius:20px; margin-top:6px; }
+.nights-badge.blue { background:#4a6fa5; }
+
+/* PENDING SECTION */
+.pending-section { background:#fff; border-radius:16px; padding:24px; margin-bottom:32px; box-shadow:0 1px 3px rgba(0,0,0,0.06); }
+.pending-title { font-size:22px; font-weight:700; color:var(--text); margin-bottom:16px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+.pending-item { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid var(--border); }
+.pending-item:last-child { border-bottom:none; }
+.pending-tag { background:#f0f0f0; color:#888; font-size:10px; font-weight:600; letter-spacing:1px; padding:4px 10px; border-radius:6px; white-space:nowrap; margin-top:2px; flex-shrink:0; }
+.pending-tag.urgent { background:#fff0e0; color:#c07020; }
+.pending-text { font-size:14px; color:var(--text); font-weight:500; }
+.pending-sub { font-size:12px; color:var(--text-muted); margin-top:3px; }
+.stat { padding:36px 16px; text-align:center; border-right:1px solid rgba(255,255,255,0.1); }
+.stat:last-child { border-right:none; }
+.stat-num { font-family:'Playfair Display',serif; font-size:38px; color:var(--gold); display:block; line-height:1; }
+.stat-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-top:6px; display:block; }
+
+/* ROUTE */
+.route { max-width:900px; margin:0 auto 72px; padding:0 24px; text-align:center; }
+.route-label { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); margin-bottom:28px; }
+.route-stops { display:flex; align-items:flex-start; justify-content:center; flex-wrap:wrap; }
+.route-stop { display:flex; align-items:center; }
+.route-city { text-align:center; padding:0 6px; }
+.route-city-name { font-family:'Playfair Display',serif; font-size:14px; color:var(--text); display:block; }
+.route-city-note { font-size:10px; color:var(--text-muted); display:block; margin-top:2px; }
+.route-arr { color:var(--gold-dim); font-size:13px; padding:0 4px; padding-bottom:12px; }
+
+/* DIVIDER */
+.divider { max-width:860px; margin:0 auto 64px; padding:0 24px; display:flex; align-items:center; gap:16px; }
+.divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border); }
+.divider span { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); white-space:nowrap; }
+
+/* SECTION */
+.section { overflow-x:hidden; max-width:860px; margin:0 auto 80px; padding:0 24px; }
+.s-label { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+.s-title { font-family:'Playfair Display',serif; font-size:32px; font-weight:700; margin-bottom:6px; letter-spacing:-0.5px; white-space:nowrap; }
+.s-meta { font-size:13px; color:var(--text-muted); padding-bottom:24px; border-bottom:1px solid var(--border); margin-bottom:28px; }
+
+/* PHOTO */
+.photo { max-width:100%; width:100%; height:260px; object-fit:cover; border-radius:12px; margin-bottom:28px; filter:brightness(.7); }
+
+/* FLIGHT BOX */
+.flight-box {
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:24px 20px; display:flex; flex-direction:column; align-items:center;
+  gap:16px; margin-bottom:24px;
+}
+.f-route { display:flex; align-items:center; justify-content:center; gap:16px; width:100%; }
+.f-code { font-family:'Playfair Display',serif; font-size:28px; text-align:center; }
+.f-info { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); margin-top:2px; }
+.f-arr { font-size:20px; color:var(--gold); }
+.f-right { text-align:center; width:100%; }
+.f-time { font-family:'Playfair Display',serif; font-size:36px; color:var(--gold); }
+.f-time-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); display:block; margin-top:2px; }
+
+/* DAYS */
+.days { display:flex; flex-direction:column; }
+.day { display:grid; grid-template-columns:90px 1fr; border-bottom:1px solid var(--border); padding:20px 0; }
+.day:last-child { border-bottom:none; }
+.d-date { padding-right:16px; }
+.d-num { font-family:'Playfair Display',serif; font-size:34px; color:var(--gold); display:block; line-height:1; font-weight:700; }
+.d-month { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-top:4px; display:block; }
+.d-body { border-left:1px solid var(--border); padding-left:24px; }
+.d-title { font-size:18px; font-weight:600; color:var(--text); margin-bottom:10px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; letter-spacing:-0.2px; }
+.d-list { list-style:none; display:flex; flex-direction:column; gap:5px; }
+.d-list li { font-size:13px; color:var(--text-dim); padding-left:16px; position:relative; line-height:1.5; }
+.d-list li::before { content:'–'; position:absolute; left:0; color:var(--gold-dim); }
+.d-list li strong { color:var(--text); font-weight:500; }
+.wow { background:rgba(196,154,46,0.08); border:1px solid rgba(196,154,46,0.25); border-radius:8px; padding:10px 14px; font-size:12px; color:#c9a060; margin-top:10px; line-height:1.5; }
+
+/* BADGES */
+.badge { font-size:10px; font-weight:500; letter-spacing:1px; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+.b-e { background:rgba(196,114,74,.15); color:#d4845a; }
+.b-v { background:rgba(212,168,83,.15); color:var(--gold); }
+.b-c { background:rgba(74,124,89,.15); color:var(--green-light); }
+.b-t { background:rgba(100,100,220,.15); color:#9999ee; }
+
+/* RESERVAS */
+.res-grid { display:flex; flex-direction:column; gap:10px; }
+.res-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  padding:16px 20px; display:grid; grid-template-columns:44px 1fr auto; align-items:center; gap:16px;
+}
+.res-icon { width:44px; height:44px; background:var(--surface2); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+.res-title { font-size:14px; font-weight:500; color:var(--text); }
+.res-detail { font-size:12px; color:var(--text-muted); margin-top:3px; }
+.res-code { font-size:11px; color:var(--gold); font-weight:500; margin-top:4px; }
+.status { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; white-space:nowrap; }
+.s-ok { background:rgba(74,124,89,.2); color:var(--green-light); }
+.s-pend { background:rgba(180,150,50,.12); color:#c9a060; }
+
+/* VIAJEROS */
+.viajeros { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+.viajero { background:var(--surface); border:1px solid var(--border); border-radius:40px; padding:8px 18px; font-size:13px; color:var(--text-dim); }
+.viajero strong { color:var(--text); font-weight:500; }
+
+/* TIPS */
+.tips-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; }
+.tip { background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--gold-dim); border-radius:10px; padding:16px; }
+.tip h4 { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:1px; color:var(--gold); margin-bottom:8px; }
+.tip p { font-size:12px; color:var(--text-dim); line-height:1.5; }
+
+footer { border-top:1px solid var(--border); text-align:center; padding:40px 24px; font-size:11px; color:var(--text-muted); letter-spacing:1px; }
+footer span { color:var(--gold); }
+
+@media(max-width:600px){
+  .stats { grid-template-columns:repeat(2,1fr); }
+  .stat:nth-child(2){ border-right:none; }
+  .day { grid-template-columns:70px 1fr; }
+  .nav-links a:not(.btn-nav){ display:none; }
+  .res-card { grid-template-columns:36px 1fr; }
+  .status { display:none; }
+  .flight-box { flex-direction:column; align-items:center; }
+  .f-right { text-align:left; }
+}
+
+.accom-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  margin-bottom: 8px;
+}
+.accom-icon { font-size: 36px; margin-bottom: 12px; display: block; }
+.accom-name { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.accom-addr { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+.accom-detail { font-size: 13px; color: var(--text-dim); margin-bottom: 8px; }
+.accom-code { display: inline-block; background: #f5f0e8; border: 1px solid #e0d5c5; border-radius: 6px; padding: 3px 10px; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+.accom-btn { display: inline-block; background: var(--gold); color: #fff; font-size: 14px; font-weight: 600; padding: 10px 20px; border-radius: 25px; text-decoration: none; }
+.accom-section-title { font-size:20px; font-weight:700; color:var(--text); margin:28px 0 14px; border-bottom:1px solid var(--border); padding-bottom:10px; }
+.city-title { font-family:"Playfair Display",serif; font-size:42px; font-weight:700; color:var(--text); margin-bottom:6px; letter-spacing:-0.5px; line-height:1.1; }
+.city-sub { font-size:13px; color:var(--text-muted); margin-bottom:0; padding-bottom:24px; border-bottom:1px solid var(--border); margin-bottom:28px; }
+
+/* TIMELINE DIA A DIA */
+.tl { display:flex; flex-direction:column; gap:0; }
+.tl-item { display:grid; grid-template-columns:14px 1fr; gap:0 18px; position:relative; padding-bottom:28px; }
+.tl-item:last-child { padding-bottom:0; }
+.tl-dot { width:14px; height:14px; background:var(--gold); border-radius:50%; margin-top:4px; flex-shrink:0; position:relative; z-index:1; }
+.tl-item::before { content:''; position:absolute; left:6px; top:18px; bottom:0; width:2px; background:var(--border); }
+.tl-item:last-child::before { display:none; }
+.tl-date { font-size:17px; font-weight:700; color:var(--gold); margin-bottom:6px; font-family:'DM Sans',sans-serif; }
+.tl-text { font-size:16px; color:var(--text-dim); line-height:1.7; font-weight:300; }
+.tl-text strong { color:var(--text); font-weight:600; }
+.tl-wow { background:#fff8ec; border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:10px 14px; font-size:14px; color:#8a6010; margin-top:10px; line-height:1.5; }
+
+
+/* ACTIVITY PHOTOS */
+.tl-photo { width:100%; border-radius:10px; margin: 8px 0 12px; object-fit:cover; max-height:200px; display:block; }
+.tl-photos { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin: 8px 0 12px; }
+.tl-photos img { width:100%; border-radius:8px; object-fit:cover; height:120px; display:block; }
+.tl-photo-single { width:100%; border-radius:10px; margin:8px 0 12px; object-fit:cover; height:180px; display:block; }
+
+
+/* PREVENT HORIZONTAL SCROLL */
+*, *::before, *::after { box-sizing: border-box; }
+img { max-width: 100%; height: auto; }
+pre, code, table { max-width: 100%; overflow-x: auto; }
+.accom-card, .accom-btn, .tl-text, .tl-wow { max-width: 100%; word-break: break-word; }
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-top">
+    <div class="nav-title">Europa 2026 · Familia</div>
+    <a href="#reservas" class="btn-nav">Ver reservas</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="eyebrow">✦ Viaje Europa · Mayo–Junio 2026 ✦</div>
+    <h1>Europa 2026<br><em>en Familia</em></h1>
+    <div style="font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:6px;">
+      ROMA &nbsp;·&nbsp; FLORENCIA &nbsp;·&nbsp; VENECIA &nbsp;·&nbsp; CRUCERO
+    </div>
+    <div class="hero-sub" style="margin-top:4px;">19 de mayo — 6 de junio · 19 días</div>
+    <div class="hero-who" style="margin-bottom:16px;">Maca · Gaby · Cala · Lupe</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <a href="#reservas" class="btn-gold" style="color:#000;">Ver reservas →</a>
+      <a href="#costos" class="btn-gold" style="background:rgba(255,255,255,0.15);color:#fff;backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.3);">💰 Ver costos</a>
+    </div>
+  </div>
+</div>
+
+
+
+<div style="background:#1a1a1a;padding:16px 20px;display:flex;align-items:center;justify-content:center;gap:0;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap;">
+  <a href="#sec-roma" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 13px;border-right:1px solid #333;min-width:70px;">
+    <span style="font-size:22px;">🏛️</span>
+    <span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);">Roma</span>
+    <span style="font-size:10px;color:var(--gold);">20 mayo–6 jun</span>
+  </a>
+  <a href="#sec-florencia" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 13px;border-right:1px solid #333;min-width:70px;">
+    <span style="font-size:22px;">🌸</span>
+    <span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);">Florencia</span>
+    <span style="font-size:10px;color:var(--gold);">21 mayo</span>
+  </a>
+  <a href="#sec-venecia" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 13px;border-right:1px solid #333;min-width:70px;">
+    <span style="font-size:22px;">🛶</span>
+    <span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);">Venecia</span>
+    <span style="font-size:10px;color:var(--gold);">21–23 mayo</span>
+  </a>
+  <a href="#crucero" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 13px;border-right:1px solid #333;min-width:70px;">
+    <span style="font-size:22px;">🛳️</span>
+    <span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);">Crucero</span>
+    <span style="font-size:10px;color:var(--gold);">23–30 mayo</span>
+  </a>
+  <a href="#sec-valija" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 13px;min-width:70px;">
+    <span style="font-size:22px;">🧳</span>
+    <span style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);">Valija</span>
+    <span style="font-size:10px;color:var(--gold);">Qué llevar</span>
+  </a>
+</div>
+
+<div class="stats">
+  <div class="stat"><span class="stat-num">19</span><span class="stat-label">Días</span></div>
+  <div class="stat"><span class="stat-num">7</span><span class="stat-label">Noches crucero</span></div>
+  <div class="stat"><span class="stat-num">6</span><span class="stat-label">Puertos</span></div>
+  <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Gelatos</span></div>
+</div>
+
+<div class="section" style="padding-top:0;">
+  <div class="s-label" style="margin-bottom:16px;">Ruta completa</div>
+  <div class="route-visual">
+
+    <div class="route-stop-row">
+      <div class="route-dot empty"></div>
+      <div class="route-stop-info">
+        <div class="route-stop-name">Buenos Aires</div>
+        <div class="route-stop-desc">EZE · Vuelo 19 mayo 16:35hs ✅</div>
+      </div>
+    </div>
+    <div class="route-connector">✈️ LH511 EZE→FRA (13h20) · escala 1h20 · LH234 FRA→FCO (1h50) · llega 14:05hs</div>
+
+    <div class="route-stop-row">
+      <div class="route-dot"></div>
+      <div class="route-stop-info">
+        <div class="route-stop-name">Roma <span class="nights-badge">1 noche</span></div>
+        <div class="route-stop-desc">Hotel Milani · Via Magenta 12</div>
+      </div>
+    </div>
+    <div class="route-connector">🚂 Frecciarossa ~1.5hs (parada Florencia)</div>
+
+    <div class="route-stop-row">
+      <div class="route-dot empty"></div>
+      <div class="route-stop-info">
+        <div class="route-stop-name">Florencia</div>
+        <div class="route-stop-desc">Parada de medio día · Duomo · Ponte Vecchio</div>
+      </div>
+    </div>
+    <div class="route-connector">🚂 Frecciarossa ~2hs</div>
+
+    <div class="route-stop-row">
+      <div class="route-dot"></div>
+      <div class="route-stop-info">
+        <div class="route-stop-name">Venecia <span class="nights-badge">2 noches</span></div>
+        <div class="route-stop-desc">New Luxury Residence Suite 2 · Riva de Biasio 1265</div>
+      </div>
+    </div>
+    <div class="route-connector">🛳️ Embarque 23 mayo 17hs</div>
+
+    <div class="route-stop-row">
+      <div class="route-dot blue"></div>
+      <div class="route-stop-info">
+        <div class="route-stop-name">Crucero Costa Deliziosa <span class="nights-badge blue">7 noches</span></div>
+        <div class="route-stop-desc">Islas Griegas + Croacia · Reserva #35595468</div>
+      </div>
+    </div>
+    <div class="route-connector">🚂 Frecciarossa ~3.5hs</div>
+
+    <div class="route-stop-row">
+      <div class="route-dot"></div>
+      <div class="route-stop-info">
+        <div class="route-stop-name">Roma <span class="nights-badge">7 noches</span></div>
+        <div class="route-stop-desc">Vaticano · Gladiadores · Capri · Villa Borghese · Castel Gandolfo</div>
+      </div>
+    </div>
+    <div class="route-connector">✈️ LH235 FCO 14:55→FRA 16:55 · escala 4h45 · LH510 FRA 21:40→EZE 7/6 06:25hs</div>
+
+    <div class="route-stop-row">
+      <div class="route-dot empty"></div>
+      <div class="route-stop-info">
+        <div class="route-stop-name">Buenos Aires · Belgrano 🏠</div>
+        <div class="route-stop-desc">EZE · 7 junio · 06:25hs · Reserva 9NY4LH</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- VUELO IDA -->
+<div id="itinerario" class="section">
+  <div class="s-label">Vuelo de ida</div>
+  <div class="s-title">Buenos Aires → Roma</div>
+  <div class="s-meta">19 de mayo · ✅ Comprado</div>
+  <div style="background:#fff;border-radius:12px;padding:16px 20px;font-size:13px;color:var(--text-dim);display:flex;flex-direction:column;gap:10px;margin-bottom:16px;border:1px solid var(--border);">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>✈️ <strong>LH 511</strong> · EZE → FRA</div>
+      <div style="color:var(--text-muted);">19 mayo · 16:35 → 20 mayo · 10:55hs</div>
+    </div>
+    <div style="height:1px;background:var(--border);"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>🔁 <strong>Escala Frankfurt</strong></div>
+      <div style="color:var(--text-muted);">1h 20min · Terminal 1</div>
+    </div>
+    <div style="height:1px;background:var(--border);"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>✈️ <strong>LH 234</strong> · FRA → FCO</div>
+      <div style="color:var(--text-muted);">20 mayo · 12:15 → <strong style="color:var(--text);">14:05hs</strong></div>
+    </div>
+    <div style="height:1px;background:var(--border);"></div>
+    <div style="display:flex;justify-content:space-between;">
+      <div style="color:var(--text-muted);">Reserva</div>
+      <div style="font-weight:600;">9NY4LH · Lufthansa</div>
+    </div>
+  </div>
+  <div style="background:#fff8ec;border:1px solid #f0d9a0;border-radius:10px;padding:14px 18px;font-size:13px;color:#8a6010;">
+    🏠 <strong>Salí de Belgrano a las 12:00hs</strong> del 19 de mayo — llegás a EZE a las 13:30hs, 3hs antes del vuelo.
+  </div>
+</div>
+
+<!-- ROMA IDA -->
+<span id="sec-roma"></span>
+<div class="divider"><span>Roma</span></div>
+<div class="section">
+  <img class="photo" src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200&q=80" alt="Roma">
+  <div class="city-title">Roma</div>
+  <div class="city-sub">20–21 mayo + 30 mayo–6 junio · 8 noches total · Hotel Milani</div>
+
+  <div class="accom-section-title">Alojamiento</div>
+  <div class="accom-card">
+    <span class="accom-icon">🏨</span>
+    <div class="accom-name">Hotel Milani — Roma</div>
+    <div class="accom-addr">Via Magenta 12, Roma · 10 min caminando a Termini</div>
+    <div class="accom-detail">Check-in 20 mayo · Check-out 21 mayo (ida) · Vuelve 30 mayo–6 junio · Habitación triple · Reserva: <span class="accom-code">HM2CJN53JS</span></div>
+    <div class="accom-detail" style="color:#2a6a2a;">✅ $306,36 USD pagado · Pendiente: tasas de ciudad</div>
+    <a href="https://maps.google.com/?q=Via+Magenta+12+Roma" target="_blank" class="accom-btn">📍 Ver en Google Maps</a>
+  </div>
+
+  <div class="accom-section-title">Día a día</div>
+  <img class="photo" src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200&q=80" alt="Roma" style="margin-bottom:24px;">
+  <div class="tl">
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Miércoles 20 — Llegada ✈️</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>22°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>14°C</strong></span>
+        </div>
+                <img src="https://images.unsplash.com/photo-1571068996010-4d58abf6bdf2?w=800&q=80" class="tl-photo-single" onerror="this.style.display='none'" alt="Villa Borghese bici">
+        <div class="tl-text">Aterrizamos en FCO a las <strong>14:05hs</strong>. Tomamos el <strong>Leonardo Express</strong> directo a Roma Termini (€14/adulto, 32 minutos, sale cada 15 min). Check-in en el <strong>Hotel Milani</strong> ~15:30hs. Para sacudir el jet lag al aire libre: alquilamos bicis en <strong>The Wheels Rome</strong> y damos una vuelta por <strong>Villa Borghese</strong> — el parque más lindo de Roma, cierra a las 19hs. Cena tranquila cerca del hotel y noche temprana.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Jueves 21 — Roma → Florencia → Venecia 🚂</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>24°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>15°C</strong></span>
+        </div>
+                <div class="tl-photos" onerror="this.style.display='none'">
+          <img src="https://images.unsplash.com/photo-1543429258-53d04371eb85?w=600&q=80" alt="Ponte Vecchio Florencia">
+          <img src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=600&q=80" alt="Duomo Florencia">
+        </div>
+        <div class="tl-text">Salimos del hotel a las <strong>8:30hs</strong> (10 minutos caminando a Termini). <strong>9:30hs</strong> Frecciarossa a Florencia, llegada <strong>11:00hs</strong>. Dejamos las valijas en la consigna de la estación y exploramos Florencia liviana: el <strong>Duomo</strong> a 10 minutos caminando, el <strong>Ponte Vecchio</strong> a 20 minutos (1.2km), almuerzo con vista al Arno. A las <strong>15:30hs</strong> Frecciarossa a Venecia, llegada <strong>17:45hs</strong>. People Mover o vaporetto al depto — llegamos con luz del día ✅</div>
+        <div class="tl-wow">🗺️ Todo Florencia está a pie desde la estación. Sin taxi, sin estrés.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- VENECIA -->
+<div class="divider"><span>Venecia</span></div>
+<span id="sec-venecia"></span>
+<div class="section">
+  <div class="city-title">Venecia</div>
+  <div class="city-sub">21–23 mayo · 2 noches · La ciudad de los canales</div>
+
+
+  <div class="accom-section-title">Alojamiento</div>
+  <div class="accom-card">
+    <span class="accom-icon">🏠</span>
+    <div class="accom-name">Airbnb Venecia — Cannaregio</div>
+    <div class="accom-addr">Riva de Biasio 1265, Cannaregio, Venecia 30121 · Anfitrión: Carlo</div>
+    <div class="accom-detail">2 noches: 21 y 22 mayo · Check-in 21 mayo 15:00hs · Check-out 23 mayo 10:00hs</div>
+    <div class="accom-detail">Reserva: <span class="accom-code">HMM92H2X23</span></div>
+    <div class="accom-detail">Barrio tranquilo, menos turístico, supermercados y farmacias cerca</div>
+    <div class="accom-detail" style="color:#2a6a2a;font-weight:500;">✅ $608,25 USD · débito automático 8 de mayo</div>
+    <a href="https://maps.google.com/?q=Riva+de+Biasio+1265+Cannaregio+Venezia" target="_blank" class="accom-btn">📍 Ver en Google Maps</a>
+  </div>
+
+  <div class="accom-section-title">Día a día</div>
+  <img class="photo" src="https://images.unsplash.com/photo-1514890547357-a9ee288728e0?w=1200&q=80" alt="Venecia" style="margin-bottom:24px;border-radius:12px;">
+  <div class="tl">
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Jueves 21 tarde — Llegada 🛶</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>22°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>14°C</strong></span>
+        </div>
+                <div class="tl-text">Llegamos en tren desde Florencia a las <strong>17:45hs</strong>. Tomamos el <strong>People Mover</strong> o vaporetto al depto en Cannaregio. Nos instalamos con luz del día ✅. Primer paseo por el barrio tranquilo, sin multitudes. Cena en algún bacaro local cerca del canal.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Viernes 22 — Venecia completa</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>23°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>14°C</strong></span>
+        </div>
+                <div class="tl-photos" onerror="this.style.display='none'">
+          <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?w=600&q=80" alt="Plaza San Marco Venecia">
+          <img src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=600&q=80" alt="Góndola Gran Canal">
+        </div>
+        <div class="tl-text">Mañana temprano a <strong>Plaza San Marcos</strong> y la Basílica antes de que lleguen los tours. Paseo en <strong>góndola</strong> por los canales (reservar online). Por la tarde, vaporetto línea 12 a las islas: <strong>Murano</strong> para ver el vidrio soplado en vivo, y <strong>Burano</strong> con sus casas de colores imposibles. De vuelta, Spritz Aperol al atardecer en un bar de <strong>Campo Santa Margherita</strong>. Cena de cicchetti en <strong>Osteria Bancogiro</strong> junto al Puente de Rialto — vista directa al Gran Canal.</div>
+        <img src="https://images.unsplash.com/photo-1606820854416-439b3305ff39?w=800&q=80" class="tl-photo-single" onerror="this.style.display='none'" alt="Burano casas de colores">
+        <div class="tl-wow">🍦 Gelato en Suso Gelatoteca, a 3 minutos del Puente de Rialto — el favorito de los venecianos.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Sábado 23 mañana — Último paseo y embarque 🛳️</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>23°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>15°C</strong></span>
+        </div>
+                <div class="tl-text"><strong>Check-out 10:00hs</strong>. Mañana libre para el <strong>Puente de Rialto</strong>, las callejitas, gelato y últimas compras. Las valijas van a consigna en la terminal. A las <strong>12:00–13:00hs</strong> embarque en el <strong>Costa Deliziosa</strong>, Terminal Marghera — el People Mover desde Piazzale Roma lleva directo (€1.50, 5 minutos). El barco zarpa a las <strong>17:00hs</strong>. Se unen <strong>Maite y Emilia</strong> al grupo — cena de bienvenida a bordo.</div>
+        <div class="tl-wow">⚓ Estar en terminal antes de las 14:00hs como máximo — la puerta de embarque cierra 2hs antes de zarpar.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="accom-section-title">🍽️ Dónde comer en Venecia</div>
+  <div style="display:grid;gap:10px;margin-bottom:4px;">
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">🍕 Birraria La Corte <span style="font-size:11px;font-weight:400;color:#888;">Kids friendly · Campo San Polo</span></div>
+      <div style="font-size:13px;color:#555;margin:5px 0 10px;">Ex cervecería reconvertida, pizza napolitana con mesas afuera en una de las mejores plazas de Venecia. Los chicos pueden moverse mientras esperan.</div>
+      <a href="https://maps.google.com/?q=Birraria+La+Corte+Campo+San+Polo+Venezia" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">🥂 Osteria Bancogiro <span style="font-size:11px;font-weight:400;color:#888;">Cicchetti · Vista al Gran Canal</span></div>
+      <div style="font-size:13px;color:#555;margin:5px 0 10px;">Los mejores cicchetti (tapas venecianas) junto al Puente de Rialto con terraza sobre el Gran Canal. También pasta y risotto. Imprescindible.</div>
+      <a href="https://maps.google.com/?q=Osteria+Bancogiro+Rialto+Venezia" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">☕ Torrefazione Cannaregio <span style="font-size:11px;font-weight:400;color:#888;">Café specialty · Tu barrio</span></div>
+      <div style="font-size:13px;color:#555;margin:5px 0 10px;">El mejor café de especialidad de Venecia, en el canal Cannaregio — a minutos del depto. Tuestan sus propios granos. Perfecto para el desayuno.</div>
+      <a href="https://maps.google.com/?q=Torrefazione+Cannaregio+Venezia" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">🍦 Suso Gelatoteca <span style="font-size:11px;font-weight:400;color:#888;">Gelato artesanal</span></div>
+      <div style="font-size:13px;color:#555;margin:5px 0 10px;">El gelato favorito de Venecia. Sabores clásicos y creativos, ingredientes naturales. Múltiples sedes cerca de Rialto y San Marcos.</div>
+      <a href="https://maps.google.com/?q=Suso+Gelatoteca+Venezia" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- CRUCERO -->
+<div id="crucero" class="divider"><span>Crucero · Costa Deliziosa</span></div>
+<div class="section">
+  <div class="s-label">7 noches · 23–30 mayo</div>
+  <div class="s-title">Crucero Mediterráneo</div>
+  <div class="s-meta">Booking #35595468 · Venecia → Bari → Corfú → Zakynthos → Argostoli → Dubrovnik → Split → Venecia</div>
+  <img class="photo" src="https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1200&q=80" alt="Costa Deliziosa">
+  <div class="days">
+
+    <div class="day">
+      <div class="d-date"><span class="d-num">23</span><span class="d-month">Mayo</span></div>
+      <div class="d-body">
+        <div class="d-title">🛳️ Embarque — Venecia</div>
+        <ul class="d-list">
+          <li>Embarque 17:00hs · Costa Deliziosa · Reserva <strong>#35595468</strong></li>
+          <li>Cena de bienvenida · recorrida del barco</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="d-date"><span class="d-num">24</span><span class="d-month">Mayo</span></div>
+      <div class="d-body">
+        <div class="d-title">🫒 Bari, Italia — El sabor del Adriático</div>
+        <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80" class="tl-photo-single" onerror="this.style.display='none'" alt="Bari Vecchia nonnas pasta orecchiette" style="margin-bottom:10px;">
+        <ul class="d-list">
+          <li><strong>Nonnas de Bari Vecchia</strong> haciendo orecchiette a mano en la calle — sentarse a mirar y aprender, gratis e imperdible</li>
+          <li><strong>Mercado de mariscos del puerto</strong> — ricci di mare, mejillones y mariscos crudos con limón al instante · llevar efectivo</li>
+          <li>Paseo por el <strong>Casco Antiguo</strong> y la Basílica de San Nicolás</li>
+        </ul>
+        <div class="wow">Las nonnas hacen la pasta en la vereda todos los días desde hace generaciones. Es el corazón de Bari y no se ve en ningún otro lado.</div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="d-date"><span class="d-num">25</span><span class="d-month">Mayo</span></div>
+      <div class="d-body">
+        <div class="d-title">🇬🇷 Corfú, Grecia — La isla veneciana</div>
+        <img src="https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?w=800&q=80" class="tl-photo-single" onerror="this.style.display='none'" alt="Corfú Grecia playa azul" style="margin-bottom:10px;">
+        <ul class="d-list">
+          <li><strong>Palacio Achilleion</strong> — construido por la Emperatriz Sisi de Austria con vistas al mar y jardines de estatuas</li>
+          <li><strong>Casco Antiguo Veneciano</strong> (UNESCO) — arquitectura italiana en plena Grecia</li>
+          <li>Playa de <strong>Paleokastritsa</strong> — aguas turquesas entre acantilados</li>
+        </ul>
+        <div class="wow">El Achilleion es de otro mundo — Sisi diseñó cada detalle pensando en los dioses griegos y el horizonte del Jónico.</div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="d-date"><span class="d-num">26</span><span class="d-month">Mayo</span></div>
+      <div class="d-body">
+        <div class="d-title">🐢 Zakynthos (Zante) — La playa del naufragio</div>
+        <img src="https://images.unsplash.com/photo-1504150558240-0b4fd8946624?w=800&q=80" class="tl-photo-single" onerror="this.style.display='none'" alt="Navagio Shipwreck Beach Zakynthos" style="margin-bottom:10px;">
+        <ul class="d-list">
+          <li>Excursión en bote a <strong>Navagio Beach (Shipwreck Beach)</strong> — la foto más icónica de Grecia</li>
+          <li><strong>Cueva Azzurra</strong> de Zakynthos — menos turística que la de Capri</li>
+          <li>Playa de Gerakas — arena blanca y agua imposiblemente transparente</li>
+        </ul>
+        <div class="wow">Agua turquesa, acantilados blancos y un barco abandonado en el medio. Una de las playas más increíbles del mundo.</div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="d-date"><span class="d-num">27</span><span class="d-month">Mayo</span></div>
+      <div class="d-body">
+        <div class="d-title">🐠 Argostoli / Cefalonia — La isla secreta</div>
+        <img src="https://images.unsplash.com/photo-1527956041665-d7a1b380c460?w=800&q=80" class="tl-photo-single" onerror="this.style.display='none'" alt="Cueva Melissani Kefalonia lago" style="margin-bottom:10px;">
+        <ul class="d-list">
+          <li><strong>Cueva Melissani</strong> — lago subterráneo donde la luz entra por el techo y tiñe el agua de azul eléctrico</li>
+          <li><strong>Myrtos Beach</strong> — una de las playas más bellas de Europa</li>
+          <li>Almuerzo con pulpo fresco a orillas del mar</li>
+        </ul>
+        <div class="wow">La Cueva Melissani es surrealista — un lago dentro de una montaña iluminado solo por el cielo.</div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="d-date"><span class="d-num">28</span><span class="d-month">Mayo</span></div>
+      <div class="d-body">
+        <div class="d-title">🏰 Dubrovnik, Croacia — El Rey del Adriático &nbsp;🎂 <span style="color:var(--gold);font-size:13px;font-weight:400;">¡Cumple de Cala!</span></div>
+        <img src="https://images.unsplash.com/photo-1580906853171-e4cf4b9a80f1?w=800&q=80" class="tl-photo-single" onerror="this.style.display='none'" alt="Dubrovnik muralla ciudad Croatia" style="margin-bottom:10px;">
+        <ul class="d-list">
+          <li><strong>Muralla medieval completa</strong> (2km) — escenario real de Game of Thrones, vista espectacular al Adriático</li>
+          <li><strong>Ciudad Vieja UNESCO</strong> — mármol blanco, iglesias barrocas, la Stradun</li>
+          <li>Cable car al <strong>Monte Srđ</strong> — vista 360° de la ciudad y el mar</li>
+          <li>Atardecer desde el <strong>Fuerte Lovrijenac</strong></li>
+          <li>🎂 <strong>¡Cala cumple 5 años!</strong> — pedir torta sorpresa al crucero con anticipación (Costa lo organiza a bordo)</li>
+        </ul>
+        <div class="wow">¡Cumpleaños de Cala en Dubrovnik! Avisarle a Costa con anticipación para organizar algo especial a bordo esa noche.</div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="d-date"><span class="d-num">29</span><span class="d-month">Mayo</span></div>
+      <div class="d-body">
+        <div class="d-title">🏛️ Split, Croacia — El palacio que se convirtió en ciudad</div>
+        <img src="https://images.unsplash.com/photo-1555990793-da11153b2473?w=800&q=80" class="tl-photo-single" onerror="this.style.display='none'" alt="Palacio Diocleciano Split Croatia" style="margin-bottom:10px;">
+        <ul class="d-list">
+          <li><strong>Palacio de Diocleciano</strong> — palacio romano del siglo IV donde hoy vive gente, hay bares y restaurantes. Único en el mundo</li>
+          <li>Callejear por el laberinto de pasadizos medievales dentro del palacio</li>
+          <li><strong>Peristilo</strong> — plaza central donde tomar un café como los romanos</li>
+        </ul>
+        <div class="wow">No es un museo — es una ciudad viva adentro de un palacio de 1.700 años. Completamente único.</div>
+      </div>
+    </div>
+
+    <div class="day">
+      <div class="d-date"><span class="d-num">30</span><span class="d-month">Mayo</span></div>
+      <div class="d-body">
+        <div class="d-title">Desembarque → Roma en tren <span class="badge b-t">🚂 Tren</span></div>
+        <ul class="d-list">
+          <li>Desembarque en Puerto Marghera, Venecia</li>
+          <li>Tren Venecia → Roma (Frecciarossa ~3.5hs) · trenitalia.com</li>
+          <li>Check-in hotel Roma · descanso · cena liviana</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+<span id="sec-roma-final"></span>
+  <div style="margin:32px 0 20px;padding-top:24px;border-top:2px solid var(--border);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);">📅 30 mayo – 6 junio · La gran etapa</div>
+  <div class="tl">
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Viernes 30 — Llegada desde el crucero 🛳️</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>25°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>16°C</strong></span>
+        </div>
+                <div class="tl-text">Desembarcamos en Puerto Marghera y tomamos el Frecciarossa a Roma (~3.5hs). Check-in en el <strong>Hotel Milani</strong>. Descanso, cena liviana y a dormir — siete noches en la ciudad eterna.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Sábado 31 — Vaticano & Barrio Prati</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>26°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>17°C</strong></span>
+        </div>
+                <div class="tl-photos" onerror="this.style.display='none'">
+          <img src="https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=600&q=80" alt="Basílica San Pedro Vaticano">
+          <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&q=80" alt="Capilla Sixtina Museos Vaticanos">
+        </div>
+        <div class="tl-text">El día del Vaticano. Mañana temprano a los <strong>Museos Vaticanos</strong> y la <strong>Capilla Sixtina</strong> — reservar en museivaticani.va con semanas de anticipación porque se agota. Después la <strong>Basílica de San Pedro</strong> y subir a la cúpula para ver Roma desde arriba. Almuerzo en el barrio <strong>Prati</strong>, el barrio de los romanos del Vaticano — lleno de restaurantes buenos y sin trampa. De camino de vuelta, el <strong>Castel Sant'Angelo</strong> desde afuera al atardecer.</div>
+        <div class="tl-wow">☕ Café de especialidad en Pergamino Caffè (Piazza Risorgimento, a 100m del Vaticano) — la mejor parada del día antes de entrar.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Domingo 1 de junio — Gladiadores, Coliseo & Trastevere ⚔️</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>27°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>17°C</strong></span>
+        </div>
+                <div class="tl-photos" onerror="this.style.display='none'">
+          <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80" alt="Coliseo Roma">
+          <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=600&q=80" alt="Escuela gladiadores Roma niños">
+        </div>
+        <div class="tl-text">Mañana en la <strong>Escuela de Gladiadores</strong> — clase de 2hs con instructores en armadura, aprenden a luchar, se visten de gladiadores y se llevan el diploma. Las nenas lo van a amar. Reservar en gruppostoricosromano.it. Después el <strong>Coliseo</strong>, el Foro Romano y el Monte Palatino (una sola entrada los cubre, reservar en coopculture.it). Por la tarde, <strong>Trastevere</strong> — el barrio más bohemio de Roma, callejitas de piedra, vino en terrazas, la mejor pizza de la ciudad en Seu Pizza Illuminati.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Lunes 2 — Día libre feriado 🎉 Clase de pasta + Escape room + Roma de noche</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>27°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>18°C</strong></span>
+        </div>
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80" class="tl-photo-single" onerror="this.style.display='none'" alt="Clase de pasta fresca Roma">
+        <div class="tl-text">Feriado italiano — la ciudad vacía y sin colas. Por la mañana, barrio libre. A las <strong>14hs, clase de pasta con Lucilla</strong> en Trastevere — hace fettuccine y ravioli desde cero con las nenas, después comen todo juntos. Favorita de familias con hijas. Por la tarde, el <strong>Escape Room</strong> en Magic Escape Roma (sala Fábrica de Chocolate, perfecta para las chicas). Para cerrar la noche: caminamos 20 minutos hasta <strong>Piazza Venezia</strong> para ver el <strong>Vittoriano iluminado</strong> — es de las cosas más impactantes de Roma. Después el <strong>Capitolino</strong> con vista al Foro Romano de noche.</div>
+        <div class="tl-wow">🌟 Roma de noche es otra ciudad. El Vittoriano iluminado en blanco es uno de los monumentos más impresionantes del mundo y de noche casi no hay gente.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Martes 3 — Villa Borghese, The Wheels & Roma barroca</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>27°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>18°C</strong></span>
+        </div>
+                <div class="tl-photos" onerror="this.style.display='none'">
+          <img src="https://images.unsplash.com/photo-1571068996010-4d58abf6bdf2?w=600&q=80" alt="Villa Borghese bici Roma">
+          <img src="https://images.unsplash.com/photo-1548504769-900b70ed122e?w=600&q=80" alt="Piazza Navona Roma">
+        </div>
+        <div class="tl-text">Mañana en <strong>Villa Borghese</strong> en bici o segway con <strong>The Wheels Rome</strong> (thewheelsrome.com) — los mismos que el primer día pero con más energía. Después la <strong>Galería Borghese</strong> para ver el Bernini en persona — las esculturas más increíbles del mundo. Hay que reservar en galleriaborghese.it, tienen cupo limitado. Por la tarde: <strong>Piazza Navona</strong>, Campo de' Fiori y el <strong>Aventino</strong> — el secreto de Roma, un jardín con cerradura desde donde se ve el Vaticano perfectamente encuadrado entre los árboles.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Miércoles 4 — Castel Gandolfo & Lago Albano ⛪</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>27°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>18°C</strong></span>
+        </div>
+                <div class="tl-photos" onerror="this.style.display='none'">
+          <img src="https://images.unsplash.com/photo-1571068996010-4d58abf6bdf2?w=600&q=80" alt="Lago Albano Castel Gandolfo">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80" alt="Castel Gandolfo lago vista">
+        </div>
+        <div class="tl-text">Excursión al pueblo de los Papas. Tren desde Roma Termini (~40 minutos) hasta <strong>Castel Gandolfo</strong>, sobre el <strong>Lago Albano</strong> — un cráter volcánico convertido en lago de agua turquesa. El <strong>Palacio Pontificio</strong> y sus jardines son impresionantes (museivaticani.va). Paseo en bote o caminata alrededor del lago. De vuelta, paramos en <strong>Frascati</strong> para probar los vinos de los Castelli Romani. Cena de despedida en Roma.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Jueves 5 — Día libre · Compras & favoritos</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>28°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>18°C</strong></span>
+        </div>
+                <div class="tl-text">El día de volver a los lugares favoritos y las compras finales. <strong>Via Condotti</strong> para el lujo italiano, Via del Corso para las marcas de siempre. Gelato en <strong>Gelateria dei Gracchi</strong>, café en <strong>Faro</strong>. Revisitar ese rincón que se quedó pendiente. Preparar maletas. Cena tranquila cerca del hotel.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div>
+        <div class="tl-date">Viernes 6 — Regreso a Buenos Aires ✈️</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:#fff8ec;border:1px solid #f0d9a0;border-radius:20px;padding:5px 12px;font-size:13px;margin-bottom:10px;">
+          <span>☀️ <strong>28°C</strong></span>
+          <span style="color:#ccc;">|</span>
+          <span>🌙 <strong>18°C</strong></span>
+        </div>
+                <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80" class="tl-photo-single" onerror="this.style.display='none'" alt="Avión regreso">
+        <div class="tl-text">Check-out del hotel a las <strong>11:30hs</strong>. Leonardo Express a Fiumicino (FCO). Vuelo <strong>LH 235</strong> Roma→Frankfurt sale a las <strong>14:55hs</strong>, llega a las 16:55hs. Escala de 4h45min en Terminal 1 — perfecta para la <strong>LuxxLounge</strong>. Vuelo <strong>LH 510</strong> Frankfurt→Buenos Aires sale a las <strong>21:40hs</strong>. Llegada EZE el 7 de junio a las <strong>06:25hs</strong>.</div>
+        <div class="tl-wow">Salí del hotel a las 11:30hs. La escala larga en Frankfurt da tiempo de relajarse en la LuxxLounge.</div>
+
+        <div style="margin-top:16px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">🛋️ Salas VIP en Frankfurt · Terminal 1</div>
+
+          <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-bottom:10px;">
+            <div style="background:#1a1a1a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">
+              <div style="color:#fff;font-weight:600;font-size:14px;">LuxxLounge ⭐ Recomendada</div>
+              <div style="background:var(--gold);color:#000;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;">TERMINAL 1</div>
+            </div>
+            <div style="padding:12px 16px;font-size:13px;color:var(--text-dim);display:flex;flex-direction:column;gap:6px;">
+              <div>📍 Entre halls B y C · Gallery level · junto al Travel Market</div>
+              <div>🕐 Abierto 6:30am – 9:30pm · Máx 3 horas · Tu vuelo sale a las 21:40hs ✅</div>
+              <div>✅ <strong>Acepta:</strong> Priority Pass · LoungeKey · DragonPass</div>
+              <div style="background:#f0f7f0;border-radius:8px;padding:8px 12px;color:#2a6a2a;font-size:12px;">
+                💳 <strong>Galicia Visa Signature / Mastercard Black</strong> → Priority Pass o LoungeKey → entrás gratis<br>
+                💳 <strong>Santander Visa Black</strong> → Visa Airport Companion → verificar en la app<br>
+                💳 <strong>Amex Galicia / Santander</strong> → beneficios solo en aeropuertos de Argentina, no aplica en Frankfurt ⚠️
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);">🌐 luxxlounge.de · Tel: +49-69-69767386</div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-bottom:10px;">
+            <div style="background:#2a4a2a;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">
+              <div style="color:#fff;font-weight:600;font-size:14px;">Primeclass Lounge</div>
+              <div style="background:#aaa;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;">TERMINAL 2</div>
+            </div>
+            <div style="padding:12px 16px;font-size:13px;color:var(--text-dim);display:flex;flex-direction:column;gap:6px;">
+              <div>📍 Level 3, Hall E, after passport control</div>
+              <div>🕐 6:00am – 10:00pm · duchas, Wi-Fi, snacks, bar</div>
+              <div>✅ Priority Pass · LoungeKey · DragonPass</div>
+              <div style="background:#fff8ec;border-radius:8px;padding:8px 12px;color:#8a6010;font-size:12px;">⚠️ Terminal 2 — tu vuelo LH510 sale de Terminal 1. Requeriría moverse entre terminales.</div>
+            </div>
+          </div>
+
+          <div style="background:#fff0f0;border-radius:10px;padding:14px 16px;font-size:13px;color:#c0392b;border:2px solid #e74c3c;display:flex;gap:12px;align-items:flex-start;">
+            <div style="font-size:22px;line-height:1;">🚨</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:4px;">GABY: reservar la LuxxLounge</div>
+              <div style="font-size:12px;line-height:1.5;">Antes del viaje activá la app <strong>Visa Airport Companion</strong> o <strong>Mastercard Airport Experiences</strong>, cargá tu tarjeta y reservá la LuxxLounge Frankfurt Terminal 1. En junio hay mucha gente y pueden pedir reserva previa.<br><br>📞 También podés llamar: <strong>luxxlounge.de</strong> · +49-69-69767386</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RESERVAS -->
+<div class="divider"><span>Qué falta reservar</span></div>
+<div class="section">
+  <div class="pending-section">
+    <div class="pending-title">Qué falta reservar</div>
+
+    <div class="pending-item">
+      <div>
+        <div class="pending-tag" style="background:#f0fff0;color:#2a6a2a;">✅ LISTO</div>
+      </div>
+      <div>
+        <div class="pending-text">Departamento Venecia</div>
+        <div class="pending-sub">$608,25 USD · débito automático 8 de mayo · Airbnb ✅</div>
+      </div>
+    </div>
+
+    <div class="pending-item">
+      <div><div class="pending-tag">PENDIENTE</div></div>
+      <div>
+        <div class="pending-text">Trenes — trenitalia.com</div>
+        <div class="pending-sub">Roma→Florencia · Florencia→Venecia · Venecia→Roma · Roma→Nápoles · Roma→Castel Gandolfo</div>
+      </div>
+    </div>
+
+    <div class="pending-item">
+      <div><div class="pending-tag">PENDIENTE</div></div>
+      <div>
+        <div class="pending-text">Museos Vaticanos + Capilla Sixtina</div>
+        <div class="pending-sub">museivaticani.va · se agota semanas antes</div>
+      </div>
+    </div>
+
+    <div class="pending-item">
+      <div><div class="pending-tag">PENDIENTE</div></div>
+      <div>
+        <div class="pending-text">Coliseo + Foro Romano</div>
+        <div class="pending-sub">coopculture.it · reservar con guía</div>
+      </div>
+    </div>
+
+    <div class="pending-item">
+      <div><div class="pending-tag">PENDIENTE</div></div>
+      <div>
+        <div class="pending-text">Galería Borghese</div>
+        <div class="pending-sub">galleriaborghese.it · solo 2hs por turno, cupo muy limitado — prioridad alta</div>
+      </div>
+    </div>
+
+    <div class="pending-item">
+      <div><div class="pending-tag">PENDIENTE</div></div>
+      <div>
+        <div class="pending-text">Escuela de Gladiadores</div>
+        <div class="pending-sub">gruppostoricosromano.it · 1 junio</div>
+      </div>
+    </div>
+
+    <div class="pending-item">
+      <div><div class="pending-tag">PENDIENTE</div></div>
+      <div>
+        <div class="pending-text">Ferry Nápoles–Capri + The Wheels Roma</div>
+        <div class="pending-sub">caremar.it · snav.it · thewheelsrome.com</div>
+      </div>
+    </div>
+
+    <div class="pending-item">
+      <div><div class="pending-tag">PENDIENTE</div></div>
+      <div>
+        <div class="pending-text">Jardines Castel Gandolfo</div>
+        <div class="pending-sub">museivaticani.va · 4 junio</div>
+      </div>
+    </div>
+
+    <div class="pending-item">
+      <div><div class="pending-tag">PENDIENTE</div></div>
+      <div>
+        <div class="pending-text">Leonardo Express FCO → Termini</div>
+        <div class="pending-sub">€14/adulto · trenitalia.com · 20 mayo</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="reservas" class="divider"><span>Todas las reservas</span></div>
+<div class="section">
+  <div class="s-label">Códigos y datos</div>
+  <div class="s-title">Todas las reservas</div>
+  <div class="s-meta">Para tener a mano durante el viaje</div>
+  <div class="res-grid">
+
+    <div class="res-card">
+      <div class="res-icon">🏨</div>
+      <div>
+        <div class="res-title">Hotel Milani — Roma (ida)</div>
+        <div class="res-detail">Check-in mié 20 mayo 14:00hs · Check-out jue 21 mayo 11:00hs · Habitación triple · Via Magenta 12, Roma · Airbnb · Código: HM2CJN53JS</div>
+        <div class="res-code">Total pagado: $306,36 USD ✅ · Pendiente: tasas de ciudad · confirmar si incluye desayuno</div>
+      </div>
+      <div class="status s-ok">Pagado</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">🏠</div>
+      <div>
+        <div class="res-title">Depto Venecia "New Luxury Residence Suite 2"</div>
+        <div class="res-detail">Check-in jue 21 mayo 15:00hs · Check-out sáb 23 mayo 10:00hs · Riva de Biasio 1265, Venecia · Anfitrión: Carlo · Airbnb</div>
+        <div class="res-code">⚠️ $608,25 USD · vence 8 mayo · Visa 1361 — pendiente de pago</div>
+      </div>
+      <div class="status s-pend">Pagar antes 8/5</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">🚂</div>
+      <div>
+        <div class="res-title">Leonardo Express — FCO → Roma Termini</div>
+        <div class="res-detail">20 mayo · llegada FCO · directo sin paradas · 32 minutos · sale cada 15 min · solo adultos pagan</div>
+        <div class="res-code">€14 por adulto · trenitalia.com</div>
+      </div>
+      <div class="status s-pend">Pendiente</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">✈️</div>
+      <div>
+        <div class="res-title">Vuelo EZE → FRA → FCO (ida)</div>
+        <div class="res-detail">19 mayo 16:35hs EZE → Frankfurt · escala 1h20 · LH234 12:15 → Roma FCO 14:05hs del 20 mayo · Lufthansa</div>
+        <div class="res-code">Reserva: 9NY4LH · ✅ Comprado</div>
+      </div>
+      <div class="status s-ok">Confirmado</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">✈️</div>
+      <div>
+        <div class="res-title">Vuelo FCO → FRA → EZE (vuelta)</div>
+        <div class="res-detail">6 junio · LH235 FCO 14:55→FRA 16:55hs · escala 4h45 · LH510 FRA 21:40→EZE 7 junio 06:25hs · Lufthansa · Terminal 1</div>
+        <div class="res-code">Reserva: 9NY4LH · ✅ Comprado · Salir del hotel 11:30hs</div>
+      </div>
+      <div class="status s-ok">Confirmado</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">🛳️</div>
+      <div>
+        <div class="res-title">Crucero Costa Deliziosa</div>
+        <div class="res-detail">23–30 mayo · Venecia→Bari→Corfú→Zakynthos→Argostoli→Dubrovnik→Split→Venecia</div>
+        <div class="res-code">Reserva #35595468</div>
+      </div>
+      <div class="status s-ok">Confirmado</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">🚂</div>
+      <div>
+        <div class="res-title">Trenes — trenitalia.com</div>
+        <div class="res-detail">Roma→Florencia (21/5) · Florencia→Venecia (21/5) · Venecia→Roma (30/5) · Roma→Nápoles (2/6) · Roma→Castel Gandolfo (4/6)</div>
+        <div class="res-code">Pendiente — comprar con anticipación</div>
+      </div>
+      <div class="status s-pend">Pendiente</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">🎫</div>
+      <div>
+        <div class="res-title">Museos Vaticanos + Capilla Sixtina</div>
+        <div class="res-detail">31 mayo · museivaticani.va · Se agota semanas antes en temporada alta</div>
+        <div class="res-code">Pendiente</div>
+      </div>
+      <div class="status s-pend">Pendiente</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">🎫</div>
+      <div>
+        <div class="res-title">Coliseo + Foro Romano</div>
+        <div class="res-detail">1 junio · coopculture.it · Reservar con guía incluido</div>
+        <div class="res-code">Pendiente</div>
+      </div>
+      <div class="status s-pend">Pendiente</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">⚔️</div>
+      <div>
+        <div class="res-title">Escuela de Gladiadores</div>
+        <div class="res-detail">1 junio · gruppostoricosromano.it · Clase práctica con diploma</div>
+        <div class="res-code">Pendiente</div>
+      </div>
+      <div class="status s-pend">Pendiente</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">🏛️</div>
+      <div>
+        <div class="res-title">Galería Borghese</div>
+        <div class="res-detail">3 junio · galleriaborghese.it · Solo 2hs por turno, cupo muy limitado — prioridad alta</div>
+        <div class="res-code">Pendiente</div>
+      </div>
+      <div class="status s-pend">Pendiente</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">🌀</div>
+      <div>
+        <div class="res-title">The Wheels Roma — Villa Borghese</div>
+        <div class="res-detail">3 junio · thewheelsrome.com · Bicicletas y segways por los jardines</div>
+        <div class="res-code">Pendiente</div>
+      </div>
+      <div class="status s-pend">Pendiente</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">⛪</div>
+      <div>
+        <div class="res-title">Jardines Castel Gandolfo</div>
+        <div class="res-detail">4 junio · museivaticani.va · Palacio Pontificio con visita guiada</div>
+        <div class="res-code">Pendiente</div>
+      </div>
+      <div class="status s-pend">Pendiente</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-icon">🏝️</div>
+      <div>
+        <div class="res-title">Ferry Nápoles–Capri</div>
+        <div class="res-detail">2 junio · caremar.it o snav.it · Comprar ida y vuelta con antelación</div>
+        <div class="res-code">Pendiente</div>
+      </div>
+      <div class="status s-pend">Pendiente</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- VIAJEROS -->
+<div class="divider"><span>El grupo</span></div>
+<div class="section">
+  <div class="s-label">En el crucero</div>
+  <div class="s-title">Con quién viajamos</div>
+  <div class="s-meta" style="margin-bottom:20px;">3 cabinas · 6 personas</div>
+  <div class="viajeros">
+    <div class="viajero">👩 <strong>Maca</strong></div>
+    <div class="viajero">👨 <strong>Gaby</strong></div>
+    <div class="viajero">👧 <strong>Cala</strong></div>
+    <div class="viajero">👧 <strong>Lupe</strong></div>
+  </div>
+  <p style="font-size:13px;color:var(--text-muted);margin-top:12px;">+ Maite y Emilia se suman en el crucero 🛳️</p>
+</div>
+
+<!-- TIPS -->
+
+<!-- COSTOS -->
+<div id="costos" class="divider"><span>Resumen de costos</span></div>
+<div class="section">
+  <div class="s-label">Lo que llevamos gastado y pendiente</div>
+  <div class="s-title">Costos del viaje</div>
+  <div class="s-meta" style="margin-bottom:24px;">En USD · tipo de cambio aproximado</div>
+
+  <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);margin-bottom:16px;">
+    
+    <div style="background:#1a1a1a;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="color:#fff;font-size:13px;letter-spacing:1px;text-transform:uppercase;">Total estimado del viaje</div>
+      <div style="font-family:'Playfair Display',serif;font-size:32px;color:var(--gold);">~$3.200</div>
+    </div>
+
+    <div style="padding:0 24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:14px;font-weight:500;">✈️ Vuelos EZE ↔ FCO</div>
+          <div style="font-size:12px;color:var(--text-muted);">Ida y vuelta · ✅ Pagado</div>
+        </div>
+        <div style="font-size:14px;font-weight:600;color:var(--green-light);">Pagado</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:14px;font-weight:500;">🛳️ Crucero Costa Deliziosa</div>
+          <div style="font-size:12px;color:var(--text-muted);">7 noches · Reserva #35595468 · ✅ Pagado</div>
+        </div>
+        <div style="font-size:14px;font-weight:600;color:var(--green-light);">Pagado</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:14px;font-weight:500;">🏨 Hotel Milani — Roma</div>
+          <div style="font-size:12px;color:var(--text-muted);">1 noche · ✅ Pagado · Pendiente: tasas</div>
+        </div>
+        <div style="font-size:14px;font-weight:600;">$306</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:14px;font-weight:500;">🏠 Depto Venecia</div>
+          <div style="font-size:12px;color:#2a6a2a;">✅ Débito automático el 8 de mayo</div>
+        </div>
+        <div style="font-size:14px;font-weight:600;">$608</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:14px;font-weight:500;">🏨 Alojamiento Roma final</div>
+          <div style="font-size:12px;color:var(--text-muted);">7 noches · Por reservar</div>
+        </div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-muted);">~$900</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:14px;font-weight:500;">🎫 Entradas (Coliseo, Vaticano, Borghese...)</div>
+          <div style="font-size:12px;color:var(--text-muted);">Por reservar</div>
+        </div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-muted);">~$300</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);">
+        <div>
+          <div style="font-size:14px;font-weight:500;">🚂 Trenes Italia</div>
+          <div style="font-size:12px;color:var(--text-muted);">Roma↔Florencia↔Venecia↔Roma + excursiones</div>
+        </div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-muted);">~$400</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;">
+        <div>
+          <div style="font-size:14px;font-weight:500;">🏝️ Excursión Capri + otros</div>
+          <div style="font-size:12px;color:var(--text-muted);">Ferry + actividades</div>
+        </div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-muted);">~$200</div>
+      </div>
+    </div>
+
+    <div style="background:#f8f4ec;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-top:2px solid var(--border);">
+      <div style="font-size:13px;color:var(--text-muted);">* Sin contar comidas, compras y gastos diarios</div>
+      <div style="font-size:11px;color:var(--text-muted);">Actualizá los montos según vayas pagando</div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ROMA GASTRONOMIA -->
+<div class="divider"><span>Roma · Dónde comer & planes</span></div>
+<div class="section">
+  <div class="city-title">Roma para familias</div>
+  <div class="city-sub">Pizzerías · Gelaterías · Café specialty · Clase de pasta · Escape room</div>
+
+  <div class="accom-section-title">🍕 Pizzerías napolitanas</div>
+  <div style="display:grid;gap:10px;">
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">Seu Pizza Illuminati</div>
+      <div style="font-size:12px;color:#888;margin:2px 0 6px;">Trastevere · Via Angelo Bargoni 10 · €€</div>
+      <div style="font-size:13px;color:#555;margin-bottom:10px;">Una de las mejores napolitanas de Roma. Espacio amplio, ambiente relajado, ideal para grupos con chicos. Gran selección de opciones para todos.</div>
+      <a href="https://maps.google.com/?q=Seu+Pizza+Illuminati+Trastevere+Roma" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">50 Kalò di Ciro Salvo</div>
+      <div style="font-size:12px;color:#888;margin:2px 0 6px;">Prati · Via Flavia · 5 min del Vaticano · €€</div>
+      <div style="font-size:13px;color:#555;margin-bottom:10px;">Maestro napolitano premiado. Masa muy hidratada y liviana cocinada en dos hornos de leña. Perfecto para almorzar antes o después de los Museos Vaticanos.</div>
+      <a href="https://maps.google.com/?q=50+Kalo+Roma+Via+Flavia" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">Bonci Pizzarium <span style="font-size:11px;color:#888;font-weight:400;">— para llevar</span></div>
+      <div style="font-size:12px;color:#888;margin:2px 0 6px;">Prati · Via della Meloria 43 · €</div>
+      <div style="font-size:13px;color:#555;margin-bottom:10px;">Pizza al taglio por peso del legendario Bonci. Rápido, barato e increíble. Ideal para una parada express con las nenas sin sentarse. A 5 min del Vaticano.</div>
+      <a href="https://maps.google.com/?q=Bonci+Pizzarium+Roma" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+  </div>
+
+  <div class="accom-section-title">🍝 Clase de pasta en vivo · Las nenas hacen fideos</div>
+  <div style="display:grid;gap:10px;">
+
+    <div class="accom-card" style="padding:16px 18px;border:2px solid var(--gold);">
+      <div style="font-size:15px;font-weight:700;">Lucilla Cooking Class ⭐ <span style="font-size:11px;color:#888;font-weight:400;">— Favorita para familias</span></div>
+      <div style="font-size:12px;color:#888;margin:2px 0 6px;">En su casa · Trastevere · Reservar en Tripadvisor · ~€50 por persona</div>
+      <div style="font-size:13px;color:#555;margin-bottom:10px;">Lucilla abre su casa y hace pasta con los chicos desde cero — fettuccine y ravioli a mano. Después comen todo junto como en familia. Espectacular con nenas. La experiencia favorita del viaje según decenas de familias con hijas.</div>
+      <div style="background:#fff8ec;border-radius:8px;padding:8px 12px;font-size:12px;color:#8a6010;margin-bottom:10px;">💡 Ideal el martes 2 junio por la tarde (feriado), antes del paseo nocturno</div>
+      <a href="https://maps.google.com/?q=Trastevere+Roma" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Trastevere, Roma</a>
+    </div>
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">Devour Tours — Pasta & Gelato</div>
+      <div style="font-size:12px;color:#888;margin:2px 0 6px;">Cocina profesional · Trastevere · devourtours.com</div>
+      <div style="font-size:13px;color:#555;margin-bottom:10px;">Hacen dos tipos de pasta fresca + demo de gelato en vivo con degustación. Ambiente grupal, ideal para todas las edades. Comen todo lo que preparan.</div>
+      <a href="https://maps.google.com/?q=Devour+Tours+Roma+Trastevere" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+  </div>
+
+  <div class="accom-section-title">🍦 Gelaterías artesanales</div>
+  <div style="display:grid;gap:10px;">
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">Otaleg! ⭐</div>
+      <div style="font-size:12px;color:#888;margin:2px 0 6px;">Trastevere · Via di San Cosimato · + sede Monteverde</div>
+      <div style="font-size:13px;color:#555;margin-bottom:10px;">Gelato natural sin conservantes de Marco Radicioni. Uno de los mejores de Roma. La sede Monteverde también tiene café specialty y abre desde las 8:30hs — perfecto para desayuno.</div>
+      <a href="https://maps.google.com/?q=Otaleg+Trastevere+Roma" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">Gelateria del Teatro</div>
+      <div style="font-size:12px;color:#888;margin:2px 0 6px;">Centro histórico · Via dei Coronari · cerca del Panteón</div>
+      <div style="font-size:13px;color:#555;margin-bottom:10px;">100% natural, sabores creativos y de temporada. Ideal para combinar con el Panteón o Piazza Navona.</div>
+      <a href="https://maps.google.com/?q=Gelateria+del+Teatro+Roma+Via+dei+Coronari" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">Gelateria dei Gracchi</div>
+      <div style="font-size:12px;color:#888;margin:2px 0 6px;">Prati · Via dei Gracchi · cerca del Vaticano</div>
+      <div style="font-size:13px;color:#555;margin-bottom:10px;">Favorita de locales desde 1999. Cocina visible — ves los ingredientes reales. El "Vecchia Roma" (cerezas, ricota, crumble) es legendario.</div>
+      <a href="https://maps.google.com/?q=Gelateria+dei+Gracchi+Roma" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+  </div>
+
+  <div class="accom-section-title">☕ Café de especialidad</div>
+  <div style="display:grid;gap:10px;">
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">Faro Caffè Specialty ⭐</div>
+      <div style="font-size:12px;color:#888;margin:2px 0 6px;">Via Piave 55 · zona Termini · cerca del hotel</div>
+      <div style="font-size:13px;color:#555;margin-bottom:10px;">El que inició la escena specialty en Roma. Tuestan su propio café. Pour over, AeroPress, cold brew, shakerato. Con espacio para sentarse.</div>
+      <a href="https://maps.google.com/?q=Faro+Caffe+Specialty+Roma+Via+Piave+55" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+    <div class="accom-card" style="padding:16px 18px;">
+      <div style="font-size:15px;font-weight:700;">Pergamino Caffè</div>
+      <div style="font-size:12px;color:#888;margin:2px 0 6px;">Piazza Risorgimento 7 · Prati · a 100m del Vaticano · abre 8:00–20:00hs</div>
+      <div style="font-size:13px;color:#555;margin-bottom:10px;">Specialty + latte art + nitro coffee. Granos single origin. Perfecto para la mañana antes de los Museos Vaticanos.</div>
+      <a href="https://maps.google.com/?q=Pergamino+Caffe+Piazza+Risorgimento+Roma" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+    </div>
+
+  </div>
+
+  <div class="accom-section-title">🔐 Escape Room familiar</div>
+  <div class="accom-card" style="padding:16px 18px;">
+    <div style="font-size:15px;font-weight:700;">Magic Escape Room Roma</div>
+    <div style="font-size:12px;color:#888;margin:2px 0 6px;">Centro de Roma · magicescape.it · ~€15–20 por persona</div>
+    <div style="font-size:13px;color:#555;margin-bottom:8px;">El primer escape room de Roma (desde 2016). Salas pensadas para familias — el staff guía a los nenas en todo momento. La sala más divertida para chicos: <strong>"Fábrica de Chocolate"</strong> — robar la receta del mejor chocolate de Suiza. Sin suspenso de miedo.</div>
+    <div style="background:#f0f0ff;border-radius:8px;padding:10px 14px;font-size:12px;color:#4a2a6a;margin-bottom:10px;">📅 <strong>Plan martes 2 junio (feriado):</strong> Mañana libre → 14hs clase de pasta con Lucilla → 17hs Escape Room → 19:30hs Vittoriano iluminado + Capitolino de noche</div>
+    <a href="https://maps.google.com/?q=Magic+Escape+Room+Roma" target="_blank" class="accom-btn" style="font-size:12px;padding:7px 16px;">📍 Ver en Google Maps</a>
+  </div>
+
+</div>
+
+<!-- PRIORIDAD RESERVAS -->
+<div class="divider"><span>Reservas prioritarias</span></div>
+<div class="section">
+  <div class="s-label">Hacelas en este orden</div>
+  <div class="s-title">¿Qué reservar primero?</div>
+  <div class="s-meta" style="margin-bottom:24px;">Algunas se agotan meses antes — no esperes</div>
+
+  <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+
+    <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <div style="background:#c0392b;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;">1 · URGENTE</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;">🖼️ Galería Borghese</div>
+        <div style="font-size:12px;color:var(--text-muted);">galleriaborghese.it · solo 2hs por turno · cupo muy limitado · se agota semanas antes</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <div style="background:#e67e22;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;">3 · ESTA SEMANA</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;">🏛️ Museos Vaticanos + Capilla Sixtina</div>
+        <div style="font-size:12px;color:var(--text-muted);">museivaticani.va · 3 junio · reservar con al menos 4 semanas de anticipación</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <div style="background:#e67e22;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;">4 · ESTA SEMANA</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;">🏟️ Coliseo + hypogeum (subsuelo)</div>
+        <div style="font-size:12px;color:var(--text-muted);">coopculture.it · 1 junio · reservar con guía · pedir acceso especial al subsuelo</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <div style="background:#f39c12;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;">5 · PRONTO</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;">⚔️ Escuela de Gladiadores</div>
+        <div style="font-size:12px;color:var(--text-muted);">gruppostoricosromano.it · 1 junio · 9am</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <div style="background:#f39c12;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;">6 · PRONTO</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;">🚂 Trenes Italia</div>
+        <div style="font-size:12px;color:var(--text-muted);">trenitalia.com · Roma→Florencia · Florencia→Venecia · Venecia→Roma · Roma→Nápoles · Roma→Castel Gandolfo</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <div style="background:#27ae60;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;">7 · MAYO</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;">⛴️ Ferry Nápoles–Capri</div>
+        <div style="font-size:12px;color:var(--text-muted);">caremar.it o snav.it · 4 junio · ida y vuelta</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <div style="background:#27ae60;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;">8 · MAYO</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;">🚲 The Wheels Rome</div>
+        <div style="font-size:12px;color:var(--text-muted);">thewheelsrome.com · 20 mayo (llegada) · bici por Villa Borghese</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:flex-start;gap:16px;padding:16px 20px;">
+      <div style="background:#27ae60;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:2px;">9 · MAYO</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;">🛋️ LuxxLounge Frankfurt · GABY</div>
+        <div style="font-size:12px;color:var(--text-muted);">App Visa Airport Companion o Mastercard Airport Experiences · reservar antes de viajar · 6 junio escala 4h45</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- VALIJA -->
+<div id="sec-valija" class="divider"><span>Qué llevar en la valija</span></div>
+<div class="section">
+  <div class="s-label">1 carry-on + 1 valija 23kg · podés lavar en Roma</div>
+  <div class="s-title">Lista de equipaje</div>
+  <div class="s-meta" style="margin-bottom:24px;">Clima: 19–27°C de día · 14–17°C de noche · 19 días</div>
+
+  <div style="display:grid;gap:12px;">
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+      <div style="background:#1a1a1a;padding:12px 18px;color:#fff;font-weight:600;font-size:14px;">👗 Ropa — menos es más</div>
+      <div style="padding:16px 18px;font-size:13px;color:var(--text-dim);display:flex;flex-direction:column;gap:8px;">
+        <div>👕 <strong>5-6 remeras</strong> — algodón o lino, colores neutros · lavás en Roma y reutilizás</div>
+        <div>👖 <strong>2 pantalones</strong> — uno jean oscuro (sirve de noche) + uno liviano</div>
+        <div>🩳 <strong>2 shorts</strong> — para Capri y días de calor</div>
+        <div>👗 <strong>1-2 vestidos o faldas</strong> — para cenar o el crucero</div>
+        <div>🧥 <strong>1 campera liviana</strong> — para noches (14-17°C) y el avión</div>
+        <div>👙 <strong>Malla</strong> — para Capri y el crucero</div>
+        <div>🧦 <strong>7 medias + 7 ropa interior</strong> — lavás a mitad del viaje</div>
+        <div>🌙 <strong>1 pijama liviano</strong></div>
+        <div style="background:#f0f7f0;border-radius:8px;padding:8px 12px;color:#2a6a2a;font-size:12px;margin-top:4px;">✅ En Roma tenés laundry cerca del hotel — podés lavar todo y llegar fresca a casa. No sobrecarguéS la valija de ida.</div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+      <div style="background:#2a4a6a;padding:12px 18px;color:#fff;font-weight:600;font-size:14px;">👟 Zapatos — máximo 3 pares</div>
+      <div style="padding:16px 18px;font-size:13px;color:var(--text-dim);display:flex;flex-direction:column;gap:8px;">
+        <div>👟 <strong>Zapatillas cómodas</strong> — vas a caminar 15-20km por día en adoquines</div>
+        <div>👡 <strong>Sandalias</strong> — para el crucero, Capri y cenas</div>
+        <div>🥿 <strong>Flats o mocasines</strong> — para entrar a iglesias (no se puede entrar con hombros descubiertos ni calzado abierto)</div>
+        <div style="background:#fff8ec;border-radius:8px;padding:8px 12px;color:#8a6010;font-size:12px;margin-top:4px;">⚠️ Para entrar al Vaticano y las iglesias: hombros y rodillas cubiertos. Llevá una pañoleta o camiseta extra en la mochila.</div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+      <div style="background:#4a2a6a;padding:12px 18px;color:#fff;font-weight:600;font-size:14px;">🧴 Neceser — lo básico</div>
+      <div style="padding:16px 18px;font-size:13px;color:var(--text-dim);display:flex;flex-direction:column;gap:8px;">
+        <div>☀️ <strong>Protector solar SPF50+</strong> — el sol romano es fuerte en junio</div>
+        <div>💊 <strong>Medicamentos</strong> — Cala y Lupe: los de siempre + algo para el mareo en barco</div>
+        <div>🩹 <strong>Botiquín básico</strong> — ibuprofeno, banditas, repelente</div>
+        <div>🔌 <strong>Adaptador universal</strong> — enchufe italiano tipo L</div>
+        <div>💊 Pastillas para mareo (Dramamine) — útil en el ferry a Capri y el crucero</div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+      <div style="background:#2a6a4a;padding:12px 18px;color:#fff;font-weight:600;font-size:14px;">🎒 Carry-on — lo que no puede ir en bodega</div>
+      <div style="padding:16px 18px;font-size:13px;color:var(--text-dim);display:flex;flex-direction:column;gap:8px;">
+        <div>📱 Celular + cargador + powerbank</div>
+        <div>💻 iPad o tablet para las nenas en el avión</div>
+        <div>🎧 Auriculares con cancelación de ruido — 13hs de vuelo</div>
+        <div>📄 Documentos: pasaportes, seguro de viaje, reservas impresas</div>
+        <div>💊 Medicamentos de las nenas</div>
+        <div>👕 1 muda de ropa (por si se pierde la valija)</div>
+        <div>🧴 Neceser pequeño con líquidos (max 100ml por frasco)</div>
+      </div>
+    </div>
+
+    <div style="background:#f8f4ec;border-radius:12px;padding:14px 18px;border:1px solid #f0d9a0;font-size:13px;color:#8a6010;">
+      💡 <strong>Tip de espacio:</strong> La valija de 23kg dejala con margen — vas a comprar cosas en el viaje (souvenirs, ropa, limoncello de Capri). Si lavás en Roma antes de volver, llegás con todo limpio y lugar de sobra.
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"><span>Tips importantes</span></div>
+<div class="section">
+  <div class="s-label">Para no meter la pata</div>
+  <div class="s-title">Tips esenciales</div>
+  <div class="s-meta" style="margin-bottom:24px;">Lo que hay que saber antes de salir</div>
+  <div class="tips-grid">
+    <div class="tip"><h4>🎫 Reservas anticipadas</h4><p>Galería Borghese, Museos Vaticanos y Coliseo se agotan. Reservar mínimo 3 semanas antes desde Argentina.</p></div>
+    <div class="tip"><h4>🚂 Trenes Frecciarossa</h4><p>Comprar en trenitalia.com con anticipación. Los precios suben mucho cerca de la fecha. Roma–Nápoles solo 1.2hs.</p></div>
+    <div class="tip"><h4>🏝️ Capri en temporada</h4><p>Junio es alta temporada. Salir de Roma antes de las 7am. La Gruta Azul tiene cola enorme después de las 10am.</p></div>
+    <div class="tip"><h4>⛪ Castel Gandolfo</h4><p>Combinar con Frascati para una jornada perfecta. Los vinos de los Castelli Romani son increíbles y baratos.</p></div>
+    <div class="tip"><h4>💶 Efectivo en Italia</h4><p>Mercados y puestos callejeros solo aceptan cash. En Bari es indispensable para el mercado de mariscos.</p></div>
+    <div class="tip"><h4>🌡️ Clima en junio</h4><p>25–32°C en Roma. Ropa liviana, protector solar y botella reutilizable. Las fuentes romanas tienen agua potable gratis.</p></div>
+    <div class="tip"><h4>🛳️ MyCosta App</h4><p>Descargar la app de Costa antes de embarcar. Ahí están horarios, excursiones y todos los servicios del barco.</p></div>
+    <div class="tip"><h4>📸 Florencia exprés</h4><p>Con pocas horas: Duomo → Ponte Vecchio → helado → tren. Los Uffizi requieren reserva y más tiempo.</p></div>
+  </div>
+</div>
+
+<footer>Hecho con amor para la familia · <span>Maca · Gaby · Cala · Lupe</span> · Europa 2026</footer>
+
+</body>
+</html>
